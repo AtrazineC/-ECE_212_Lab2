@@ -26,6 +26,8 @@
 \usepackage{listings}
 \usepackage{xcolor}
 
+\DeclareMathOperator{\di}{d\!} % derivative operator symbol, ex. $\int f(x) \di x$
+\newcommand{\Eval}[3]{\left.#1\right\rvert_{#2}^{#3}} % evaluation bar (ex. evaluating integral or $\Eval{F(x)}{0}{2}$)
 \newcommand*\B{\includegraphics[height=1.5em,valign=B,raise=-0.2em]{BigB.png}}
 \newcommand*\fire{\includegraphics[height=1.5em,valign=B,raise=-0.2em]{Fire.png}}
 
@@ -164,7 +166,45 @@ In order to determine if our program actually does this correctly, we ran our co
 Upon testing our program, it was evident that our program worked since the areas that we found for each test case corresponded to the expected output. Our screenshot of the MTTY terminal output is included in the appendix.
 
 \section{Questions}
-f
+\textit{What are the advantages of using the different addressing modes covered in this lab?}
+
+Let ``Register Indirect with Offset" be mode 1, ``Indexed Register Indirect" be mode 2, and ``Postincrement Register" be mode 3. 
+An obvious advantage mode 2 and mode 3 have over mode 1 is that since we are essentially able to loop until the array is finished, we can input an array of any size we wish rather than hard-coding each iteration of the loop. 
+It is also significantly less tedious to implement mode 2 and mode 3 since significantly less code is needed when using a loop-like structure. 
+
+Upon comparing mode 2 and mode 3, the difference is less pronounced. 
+Mode 2 is slightly more complicated than mode 3 since mode 2 requires the coder to keep track of the address offset using another variable, while mode 3 automatically increments the address to the next location in memory each time the loop executes, removing the need for the coder to keep track of the current offset.
+
+\textit{If the difference between the X data points are not restricted to be either one, two, or four units, how would you modify your program to calculate the area?}
+
+\textit{From the data points, what is the function $y = f(x)$? What is the percent error between the theoretical calculated area and the one obtained in the program? Calculate all 3 functions.}
+
+From DataStorage4, it is evident that the function is $f(x) = x^2$, and the data points given indicate that the range we are interested in is $[0, 50]$. Therefore, the actual area under the graph is given by
+\begin{equation}
+	A_1 = \int_0^{50} x^2 \di x = \dfrac{125000}{3} \approx 41666.666.
+\end{equation} 
+Our program output the value of 41675. Therefore, calculating error, we have
+\begin{equation}
+	\epsilon_1 = \dfrac{41675 - 41666.666}{41666.666} \cdot 100\% = 0.02\%. 
+\end{equation}
+
+From DataStorage5, it is evident that the function is again $f(x) = x^2$, and the data points given indicate that the range is $[0, 80]$. Therefore, the actual area under the graph is given by
+\begin{equation}
+	A_2 = \int_0^{80} x^2 \di x = \dfrac{512000}{3} \approx 170666.666.
+\end{equation} 
+Our program output the value of 170710. Therefore, calculating error, we have
+\begin{equation}
+	\epsilon_2 = \dfrac{170710 - 170666.666}{170666.666} \cdot 100\% \approx 0.02539\%. 
+\end{equation}
+
+From DataStorage6, it is evident that the function is again $f(x) = x^2$, and the data points given indicate that the range is $[0, 110]$. Therefore, the actual area under the graph is given by
+\begin{equation}
+	A_3 = \int_0^{110} x^2 \di x = \dfrac{1331000}{3} \approx 443666.666.
+\end{equation} 
+Our program output the value of 443843. Therefore, calculating error, we have
+\begin{equation}
+	\epsilon_3 = \dfrac{443843 - 443666.666}{443666.666} \cdot 100\% \approx 0.03974\%. 
+\end{equation}
 
 \section{Conclusion}
 g
@@ -180,7 +220,7 @@ g
    \includegraphics[width=0.52\textwidth]{mttypartA.png}
    \centering  
    \caption{Screenshot of MTTY output for part A.} 
-   \label{figure:3}
+   \label{figure:4}
 \end{figure}
 
 \subsection{Part B MTTY Screenshots}
@@ -188,7 +228,7 @@ g
    \includegraphics[width=0.45\textwidth]{mttypartB.png}
    \centering  
    \caption{Screenshot of MTTY output for part B.} 
-   \label{figure:3}
+   \label{figure:5}
 \end{figure}
 
 \subsection{Part A Assembler Code}
