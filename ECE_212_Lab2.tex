@@ -118,7 +118,9 @@ Introduction to\\ Addressing Modes\\
 
 
 \section{Introduction}
-As we learned in class, assembly language stores data in memory based on addresses. In this lab, we will investigate several different ways to address memory that is stored in memory. We also experiment with the differences between reading and writing to memory using these different addressing modes.
+As we learned in class, assembly language stores data in memory based on addresses. 
+In this lab, we will investigate several different ways to address memory that is stored in memory. 
+We also experiment with the differences between reading and writing to memory using these different addressing modes.
 
 In part A of the lab, we wrote a program that adds adjacent contents of two arrays stored at different memory locations using three different methods to access memory:
 \begin{itemize}
@@ -126,9 +128,12 @@ In part A of the lab, we wrote a program that adds adjacent contents of two arra
 	\item Indexed Register Indirect, and
 	\item Postincrement Register.
 \end{itemize}
-The resulting array from adding the contents with each of the different addressing mode types are stored in three different locations before being output afterwards to the MTTY console. Note that for the first type of addressing mode (Register Indirect With Offset), we only perform the addition for the first 3 adjacent values to demonstrate that we understand this type of addressing.
+The resulting array from adding the contents with each of the different addressing mode types are stored in three different locations before being output afterwards to the MTTY console. 
+Note that for the first type of addressing mode (Register Indirect With Offset), we only perform the addition for the first 3 adjacent values to demonstrate that we understand this type of addressing.
 
-In part B of the lab, we created a function that calculated the area underneath a curve given the data points using the trapezoidal rule. Using the data points stored in memory ($x$ and $y$ data points), it is mathematically trivial to calculate the area formed by the data points. Note that the distance between each $x$ data point is either one, two, or four units. 
+In part B of the lab, we created a function that calculated the area underneath a curve given the data points using the trapezoidal rule. 
+Using the data points stored in memory ($x$ and $y$ data points), it is mathematically trivial to calculate the area formed by the data points. 
+Note that the distance between each $x$ data point is either one, two, or four units. 
 
 \section{Design}
 \subsection{Part A}
@@ -139,10 +144,24 @@ c
 
 \section{Testing}
 \subsection{Part A}
-d
+If properly implemented, part A should correctly add adjacent elements in two different arrays into a new resulting array, regardless of which of the three methods used. 
+These methods were
+\begin{itemize}
+	\item Register Indirect With Offset,
+	\item Indexed Register Indirect, and
+	\item Postincrement Register.
+\end{itemize}
+For example, given two arrays $A = [A_0, A_1, ...]$ and $B = [B_0, B_1, ...]$ to add, our resultant array would be $C = [A_0 + B_0, A_1 + B_1, ...]$.
+In order to test that our program functioned correctly, we ran our code against a test case (one of the DataStorage files) and compared our results to the expected results which were given to us by our TAs. 
+
+Upon testing our program, it was evident that our program worked since our output matched what was expected and all methods used to add the arrays resulted in the same resultant array. Our screenshot of the MTTY terminal output is included in the appendix.
 
 \subsection{Part B}
-e
+If properly implemented, part B should correctly calculate the area under a curve given a set of data points with $x$ and $y$ coordinates. We use the trapezoidal rule to accomplish this: we sum up the area of the trapezoid between each point from the first point to the last point and achieve the area under the graph. 
+
+In order to determine if our program actually does this correctly, we ran our code against several test cases provided on eClass given in the form of DataStorage files and compared our output to the expected output provided to us. 
+
+Upon testing our program, it was evident that our program worked since the areas that we found for each test case corresponded to the expected output. Our screenshot of the MTTY terminal output is included in the appendix.
 
 \section{Questions}
 f
