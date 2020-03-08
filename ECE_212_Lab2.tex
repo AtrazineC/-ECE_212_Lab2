@@ -95,7 +95,7 @@
 
 \title{\textbf{\Huge{
 \begin{center}
-Introduction to\\ Assembly Language\\
+Introduction to\\ Addressing Modes\\
 \end{center}
 }}}
 \author{Benjamin Kong | 1573684\\Lora Ma ||||| 1570935\\ \\ECE 212 Lab Section H11}
@@ -103,7 +103,7 @@ Introduction to\\ Assembly Language\\
 \pagestyle{fancy}
 \fancyhf{}
 \rhead{Benjamin Kong \& Lora Ma}
-\lhead{\textit{Introduction to Assembly Language}}
+\lhead{\textit{Introduction to Addressing Modes}}
 \rfoot{Page \thepage}
 
 \begin{document} 
@@ -118,7 +118,17 @@ Introduction to\\ Assembly Language\\
 
 
 \section{Introduction}
-a
+As we learned in class, assembly language stores data in memory based on addresses. In this lab, we will investigate several different ways to address memory that is stored in memory. We also experiment with the differences between reading and writing to memory using these different addressing modes.
+
+In part A of the lab, we wrote a program that adds adjacent contents of two arrays stored at different memory locations using three different methods to access memory:
+\begin{itemize}
+	\item Register Indirect With Offset,
+	\item Indexed Register Indirect, and
+	\item Postincrement Register.
+\end{itemize}
+The resulting array from adding the contents with each of the different addressing mode types are stored in three different locations before being output afterwards to the MTTY console. Note that for the first type of addressing mode (Register Indirect With Offset), we only perform the addition for the first 3 adjacent values to demonstrate that we understand this type of addressing.
+
+In part B of the lab, we created a function that calculated the area underneath a curve given the data points using the trapezoidal rule. Using the data points stored in memory ($x$ and $y$ data points), it is mathematically trivial to calculate the area formed by the data points. Note that the distance between each $x$ data point is either one, two, or four units. 
 
 \section{Design}
 \subsection{Part A}
@@ -147,19 +157,135 @@ g
 
 \section{Appendix}
 \subsection{Part A MTTY Screenshots}
-
+\begin{figure}[H]
+   \includegraphics[width=0.52\textwidth]{mttypartA.png}
+   \centering  
+   \caption{Screenshot of MTTY output for part A.} 
+   \label{figure:3}
+\end{figure}
 
 \subsection{Part B MTTY Screenshots}
-
+\begin{figure}[H]
+   \includegraphics[width=0.45\textwidth]{mttypartB.png}
+   \centering  
+   \caption{Screenshot of MTTY output for part B.} 
+   \label{figure:3}
+\end{figure}
 
 \subsection{Part A Assembler Code}
 \begin{lstlisting}
-	/*----------------------------------------------------------------*/
+	/*Part A **********************************************************/
+	MOVEA.L #0x43000000, %a1 
+	MOVE.L (%a1), %d3 /* d1 is the size of our array*/
+	MOVEA.L #0x43000004, %a1
+	MOVEA.L (%a1), %a2  /* address of first array */
+	MOVEA.L #0x43000008, %a1
+	MOVEA.L (%a1), %a3 /* address of second array */
+	MOVEA.L #0x4300000C, %a1 
+	MOVEA.L (%a1), %a4 /* where to store adjacent sums */
+	
+	MOVE.L (%a2), %d1 /* make a copy of first array value */
+	MOVE.L (%a3), %d2 /* make a copy of second array value */
+	ADD.L %d1, %d2 /* add first array value and second array value and put result into d2*/
+	MOVE.L %d2, (%a4) /* move added value into address at a4 */
+	
+	MOVE.L 4(%a2), %d1 /*increment first array index and move new value into d1*/
+	MOVE.L 4(%a3), %d2 /*increment second array index and move new value into d2*/
+	ADD.L %d1, %d2 /*add values together*/
+	MOVE.L %d2, 4(%a4) /*put added value into incremented array a4*/
+	
+	/*repeat above process*/
+	MOVE.L 8(%a2), %d1 
+	MOVE.L 8(%a3), %d2
+	ADD.L %d1, %d2
+	MOVE.L %d2, 8(%a4)
+	
+	/*Part B **********************************************************/
+	
+	MOVE.L #0, %d2  /* Store 0 into d2*/
+	
+	MOVEA.L #0x43000010, %a1 
+	MOVEA.L (%a1), %a4 /*store address for result array*/
+	
+	loop_partB:
+	CMP.L %d2, %d3 /*compare zero and d3 */
+	BEQ next /* exit part B*/
+	
+	MOVE.L (%a2, %d2*4), %d1 /* add 4 to d2 and add to a2. Store value in d1 */
+	ADD.L (%a3, %d2*4), %d1 /* Add d2 with 4, a3 and d1. Store value in d1 */
+	MOVE.L %d1, (%a4, %d2*4) /* move the value of d1 into the value of d2+4+a4*/
+	ADDI.L #1, %d2 /* Add 1 to d2*/
+	BRA loop_partB /* loop */
+	
+	/*Part C **********************************************************/
+	
+	next:
+	
+	MOVEA.L #0x43000014, %a1 /*intialize value of a1*/
+	MOVEA.L (%a1), %a4 /*initialize a4 with value at a1*/
+	
+	loop_partC:
+	CMPI.L #0, %d3 /*compare d3 to 0*/
+	BEQ exit /* if equal, exit */
+	
+	MOVE.L (%a2)+, %d1 /*put value of first array value into d1 and increment a3*/
+	ADD.L (%a3)+, %d1 /* add value in seond array to d1 and increment a3*/
+	MOVE.L %d1, (%a4)+ /* move value in d1 to array with results and increment the array */
+	SUBI.L #1, %d3 /*subtract 1 from d3*/
+	BRA loop_partC
+	
+	exit:
+	
+	/*End of program **************************************************/
 \end{lstlisting}
 
 \subsection{Part B Assembler Code}
 \begin{lstlisting}
-	/*----------------------------------------------------------------*/
+	/*Write your program here******************************************/
+	MOVEA.L #0x43000000, %a1 
+	MOVE.L (%a1), %d3 /* load value for data points at address a1 into d3*/
+	
+	MOVEA.L #0x43000004, %a1
+	MOVEA.L (%a1), %a2 /*load array for x points in a2*/
+	
+	MOVEA.L #0x43000008, %a1
+	MOVEA.L (%a1), %a3 /*load array for y points in a3*/
+	
+	MOVEA.L #0x43000010, %a1
+	MOVEA.L (%a1), %a4 /*load results array in a4*/
+	
+	CLR.L %d2 /*clear d2*/
+	
+	loopVals:
+	CMPI.L #1, %d3 /* compare 1 to data point */
+	BEQ exit /* if equal, go to exit */
+	
+	SUBI.L #1, %d3 /*reduce counter by 1*/
+	
+	/* Load x vals, calculate delta x */
+	MOVE.L 4(%a2), %d0
+	SUB.L (%a2)+, %d0
+	
+	/* Load y vals, calculate sum of y */
+	MOVE.L 4(%a3), %d1 /* increment y array and put new val into d1 */ 
+	ADD.L (%a3)+, %d1 /* post increment a3 after adding current a3 val to d1*/
+	
+	loop_X:
+	CMPI.L #1, %d0 /*compare value 1 with d0*/
+	BEQ area /*if equal, calculate area*/
+	LSR.L #1, %d0 /*logical shift right by 1 in d0*/
+	LSL.L #1, %d1 /*logical shift left by 1 in d1*/
+	BRA loop_X
+	
+	area:
+	ADD.L %d1, %d2 /*add d1 and d2*/
+	BRA loopVals 
+	
+	exit:
+	LSR.L #1, %d2 /* divide by 2 */
+	MOVE.L %d2, (%a4) /* store in results */
+	
+	/*End of program **************************************************/
 \end{lstlisting}
 
 \end{document}
