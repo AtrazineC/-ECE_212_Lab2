@@ -121,7 +121,7 @@ Introduction to\\ Addressing Modes\\
 
 \section{Introduction}
 As we learned in class, assembly language stores data in memory based on addresses. 
-In this lab, we will investigate several different ways to address memory that is stored in memory. 
+In this lab, we will investigate several different addressing modes to access memory and also calculate the area under a curve using assembly language. 
 We also experiment with the differences between reading and writing to memory using these different addressing modes.
 
 In part A of the lab, we wrote a program that adds adjacent contents of two arrays stored at different memory locations using three different methods to access memory:
@@ -163,10 +163,12 @@ This value is stored in the results array pointed by its address and then the ad
 Afterwords, we subtract one from the array size and repeat the process.
 
 \subsection{Part B}
-In part B, we used the trapezoidal rule that allowed us to estimate the area under a curve.\
+In part B, we used the trapezoidal rule that allowed us to estimate the area under a curve.
 \begin{equation*}
 A = \frac{\delta x}{2} (y_1 - y_2)
 \end{equation*}
+
+
 \section{Testing}
 \subsection{Part A}
 If properly implemented, part A should correctly add adjacent elements in two different arrays into a new resulting array, regardless of which of the three methods used. 
@@ -230,7 +232,19 @@ Our program output the value of 443843. Therefore, calculating error, we have
 \end{equation}
 
 \section{Conclusion}
-g
+The purpose of this lab was to explore different addressing modes and calculate the area under a curve using assembly language. 
+
+In part A of the lab, we wrote a program that adds adjacent contents in two different arrays into a third resultant array. 
+We completed this task using three different types of addressing modes:
+\begin{itemize}
+	\item Register Indirect With Offset,
+	\item Indexed Register Indirect, and
+	\item Postincrement Register.
+\end{itemize}
+This part of the lab was a success, since we successfully achieved the goal of the program (to add two arrays). 
+Our results for all three methods matched up with the expected results.
+
+In Part B of the lab, we wrote a program that calculates the area under a curve given $x$ and $y$ data points using the trapezoidal rule. As with the first part of the lab, this part of the lab was also a success since the areas that we output matched up with the expected results.
 
 
 \end{multicols*}
@@ -271,16 +285,15 @@ g
 	ADD.L %d1, %d2 /* add first array value and second array value and put result into d2*/
 	MOVE.L %d2, (%a4) /* move added value into address at a4 */
 	
-	MOVE.L 4(%a2), %d1 /*increment first array index and move new value into d1*/
-	MOVE.L 4(%a3), %d2 /*increment second array index and move new value into d2*/
+	MOVE.L 4(%a2), %d1 /*increment first array by 4 and move new value into d1*/
+	MOVE.L 4(%a3), %d2 /*increment second array by 4 and move new value into d2*/
 	ADD.L %d1, %d2 /*add values together*/
-	MOVE.L %d2, 4(%a4) /*put added value into incremented array a4*/
+	MOVE.L %d2, 4(%a4) /*increment results array by 4 and store added value*/
 	
-	/*repeat above process*/
-	MOVE.L 8(%a2), %d1 
-	MOVE.L 8(%a3), %d2
-	ADD.L %d1, %d2
-	MOVE.L %d2, 8(%a4)
+	MOVE.L 8(%a2), %d1 /*increment first array by 8 and move new value into d1*/
+	MOVE.L 8(%a3), %d2 /*increment second array by 8 and move new value into d2*/
+	ADD.L %d1, %d2 /*add values together*/
+	MOVE.L %d2, 8(%a4) /*increment results array by 8 and store added value*/
 	
 	/*Part B **********************************************************/
 	
@@ -290,14 +303,14 @@ g
 	MOVEA.L (%a1), %a4 /*store address for result array*/
 	
 	loop_partB:
-	CMP.L %d2, %d3 /*compare zero and d3 */
+	CMP.L %d2, %d3 /*compare offset and size of array */
 	BEQ next /* exit part B*/
 	
-	MOVE.L (%a2, %d2*4), %d1 /* add 4 to d2 and add to a2. Store value in d1 */
+	MOVE.L (%a2, %d2*4), %d1 /* multiply 4 with d2 and add to a2. Store value in d1 */
 	ADD.L (%a3, %d2*4), %d1 /* Add d2 with 4, a3 and d1. Store value in d1 */
-	MOVE.L %d1, (%a4, %d2*4) /* move the value of d1 into the value of d2+4+a4*/
+	MOVE.L %d1, (%a4, %d2*4) /* move the value of d1 into the value of offset*4+a4*/
 	ADDI.L #1, %d2 /* Add 1 to d2*/
-	BRA loop_partB /* loop */
+	BRA loop_partB 
 	
 	/*Part C **********************************************************/
 	
@@ -307,13 +320,13 @@ g
 	MOVEA.L (%a1), %a4 /*initialize a4 with value at a1*/
 	
 	loop_partC:
-	CMPI.L #0, %d3 /*compare d3 to 0*/
+	CMPI.L #0, %d3 /*compare size of array to 0*/
 	BEQ exit /* if equal, exit */
 	
 	MOVE.L (%a2)+, %d1 /*put value of first array value into d1 and increment a3*/
 	ADD.L (%a3)+, %d1 /* add value in seond array to d1 and increment a3*/
 	MOVE.L %d1, (%a4)+ /* move value in d1 to array with results and increment the array */
-	SUBI.L #1, %d3 /*subtract 1 from d3*/
+	SUBI.L #1, %d3 /*subtract 1 from size of array*/
 	BRA loop_partC
 	
 	exit:
